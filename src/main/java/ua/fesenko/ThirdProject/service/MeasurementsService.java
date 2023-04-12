@@ -8,7 +8,7 @@ import ua.fesenko.ThirdProject.models.Sensor;
 import ua.fesenko.ThirdProject.repository.MeasurementsRepository;
 import ua.fesenko.ThirdProject.repository.SensorRepository;
 
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,15 +34,21 @@ public class MeasurementsService {
 
     @Transactional
     public void addMeasurements(Measurements measurement) {
-        Optional<Sensor> exists = sensorRepository.findById(measurement.getSensor().getId());
-        System.out.println(measurement.getSensor().getName());
-        System.out.println(measurement.getSensor().getId());
 
-        if (exists.isPresent()) {
-            exists.get().setMeasurements(Collections.singletonList(measurement));
-            measurementsRepository.saveAndFlush(measurement);
-        } else {
-            throw new RuntimeException("The sensor is not exist!");
-        }
+        fullTheMeasurement(measurement);
+        measurementsRepository.save(measurement);
+
+//        if (exists.isPresent()) {
+////             Hibernate.initialize(exists.get());
+//            measurementsRepository.saveAndFlush(measurement);
+////            exists.get().setMeasurements(Collections.singletonList(measurement));
+//        } else {
+//            throw new RuntimeException("The sensor is not exist!");
+//        }
+    }
+    private void fullTheMeasurement(Measurements measurement) {
+     measurement.setSensor(sensorRepository.findByName(measurement.getSensor().getName()).get());
+     measurement.setCreatedAt(LocalDateTime.now());
+     measurement.setUpdatedAt(LocalDateTime.now());
     }
 }

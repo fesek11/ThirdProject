@@ -42,8 +42,16 @@ public class Measurements {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @JoinColumn(name = "sensor_id", referencedColumnName = "id")
+    @NotNull
+    @JoinColumn(name = "sensors_name", referencedColumnName = "name")
     @ManyToOne
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Sensor sensor;
+
+    public Measurements(float value, boolean raining, LocalDateTime createdAt, LocalDateTime updatedAt, Sensor sensor) {
+        this.value = value;
+        this.raining = raining;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.sensor = sensor;
+    }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ua.fesenko.ThirdProject.dto.MeasurementsDTO;
 import ua.fesenko.ThirdProject.models.Measurements;
 import ua.fesenko.ThirdProject.service.MeasurementsService;
-import ua.fesenko.ThirdProject.service.SensorService;
 import ua.fesenko.ThirdProject.util.MeasurementNotCreatedException;
 
 import java.time.LocalDateTime;
@@ -21,14 +20,12 @@ import java.util.List;
 @RequestMapping("/measurements")
 public class MeasurementsController {
     private final MeasurementsService measurementsService;
-    private final SensorService sensorService;
     private final ModelMapper modelMapper;
 
 
     @Autowired
-    public MeasurementsController(MeasurementsService measurementsService, SensorService sensorService, ModelMapper modelMapper) {
+    public MeasurementsController(MeasurementsService measurementsService, ModelMapper modelMapper) {
         this.measurementsService = measurementsService;
-        this.sensorService = sensorService;
         this.modelMapper = modelMapper;
     }
 
@@ -55,16 +52,18 @@ public class MeasurementsController {
     }
 
     private Measurements convertToMeasurements(MeasurementsDTO measurementsDTO) {
-        Measurements measurements = new Measurements();
+        Measurements m = new Measurements();
+        m.setValue(measurementsDTO.getValue());
+        m.setSensor(measurementsDTO.getSensor());
+        m.setRaining(measurementsDTO.isRaining());
+        m.setCreatedAt(LocalDateTime.now());
+        m.setUpdatedAt(LocalDateTime.now());
+        return m;
+//        return modelMapper.map(measurementsDTO, Measurements.class);
+    }
+    private MeasurementsDTO convertToMeasurementsDTO(Measurements measurements) {
 
-
-        measurements.setValue(measurementsDTO.getValue());
-        measurements.setRaining(measurementsDTO.isRaining());
-        measurements.setSensor(measurementsDTO.getSensor());
-        measurements.setCreatedAt(LocalDateTime.now());
-        measurements.setUpdatedAt(LocalDateTime.now());
-
-        return modelMapper.map(measurementsDTO, Measurements.class);
+        return modelMapper.map(measurements, MeasurementsDTO.class);
     }
 
     @GetMapping

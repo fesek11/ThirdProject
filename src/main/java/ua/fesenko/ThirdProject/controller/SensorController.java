@@ -41,7 +41,7 @@ public class SensorController {
             }
             throw new SensorNotCreatedException(builder.toString());
         }
-        Sensor sensor = getSensor(sensorDTO);
+        Sensor sensor = convertToSensor(sensorDTO);
 
         try {
             sensorService.doRegister(sensor);
@@ -67,9 +67,7 @@ public class SensorController {
         return new ResponseEntity<>(sensorErrorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    private static Sensor getSensor(SensorDTO sensorDTO) {
-        Sensor sensor = new Sensor();
-        sensor.setName(sensorDTO.getName());
-        return sensor;
+    private Sensor convertToSensor(SensorDTO sensorDTO) {
+        return modelMapper.map(sensorDTO, Sensor.class);
     }
 }

@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import java.util.List;
 
@@ -28,7 +27,6 @@ public class Sensor {
     @Column(name = "name", unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "sensor")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Measurements> measurements;
+//    @OneToMany(mappedBy = "sensor", cascade = {CascadeType.ALL})
+//    private List<Measurements> measurements;
 }
