@@ -4,13 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.fesenko.ThirdProject.models.Measurements;
-import ua.fesenko.ThirdProject.models.Sensor;
 import ua.fesenko.ThirdProject.repository.MeasurementsRepository;
 import ua.fesenko.ThirdProject.repository.SensorRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,25 +26,16 @@ public class MeasurementsService {
         return measurementsRepository.findAll();
     }
 
-    public List<Measurements> getRainyDaysCount() {
-        return measurementsRepository.findByRaining(true);
+    public Long getRainyDaysCountLong() {
+        return measurementsRepository.countByRainingIsTrue();
     }
 
     @Transactional
     public void addMeasurements(Measurements measurement) {
-
-        fullTheMeasurement(measurement);
+        fillTheMeasurement(measurement);
         measurementsRepository.save(measurement);
-
-//        if (exists.isPresent()) {
-////             Hibernate.initialize(exists.get());
-//            measurementsRepository.saveAndFlush(measurement);
-////            exists.get().setMeasurements(Collections.singletonList(measurement));
-//        } else {
-//            throw new RuntimeException("The sensor is not exist!");
-//        }
     }
-    private void fullTheMeasurement(Measurements measurement) {
+    private void fillTheMeasurement(Measurements measurement) {
      measurement.setSensor(sensorRepository.findByName(measurement.getSensor().getName()).get());
      measurement.setCreatedAt(LocalDateTime.now());
      measurement.setUpdatedAt(LocalDateTime.now());

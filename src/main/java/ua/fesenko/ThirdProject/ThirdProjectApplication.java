@@ -8,14 +8,12 @@ import ua.fesenko.ThirdProject.repository.SensorRepository;
 
 @SpringBootApplication
 public class ThirdProjectApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ThirdProjectApplication.class, args);
 
-	public static void main(String[] args) {
-		SpringApplication.run(ThirdProjectApplication.class, args);
-	}
-
-
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
+    }
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 }

@@ -27,6 +27,6 @@ public class Sensor {
     @Column(name = "name", unique = true)
     private String name;
 
-//    @OneToMany(mappedBy = "sensor", cascade = {CascadeType.ALL})
+//    @OneToMany(mappedBy = "sensor", cascade = {CascadeType.ALL}) :todo try create cascade list of measurements
 //    private List<Measurements> measurements;
 }

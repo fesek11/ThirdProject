@@ -13,7 +13,7 @@ import ua.fesenko.ThirdProject.models.Measurements;
 import ua.fesenko.ThirdProject.service.MeasurementsService;
 import ua.fesenko.ThirdProject.util.MeasurementNotCreatedException;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -52,28 +52,29 @@ public class MeasurementsController {
     }
 
     private Measurements convertToMeasurements(MeasurementsDTO measurementsDTO) {
-        Measurements m = new Measurements();
-        m.setValue(measurementsDTO.getValue());
-        m.setSensor(measurementsDTO.getSensor());
-        m.setRaining(measurementsDTO.isRaining());
-        m.setCreatedAt(LocalDateTime.now());
-        m.setUpdatedAt(LocalDateTime.now());
-        return m;
-//        return modelMapper.map(measurementsDTO, Measurements.class);
+        return modelMapper.map(measurementsDTO, Measurements.class);
     }
-    private MeasurementsDTO convertToMeasurementsDTO(Measurements measurements) {
 
-        return modelMapper.map(measurements, MeasurementsDTO.class);
+    private List<MeasurementsDTO> convertToMeasurementsDTO(List<Measurements> measurements) {
+        return Collections.singletonList(modelMapper.map(measurements, MeasurementsDTO.class));
     }
 
     @GetMapping
-    public List<Measurements> getAllMeasurements() {
-        return measurementsService.getAllMeasurements();
+    public List<MeasurementsDTO> getAllMeasurements() {
+        try {
+            return convertToMeasurementsDTO(measurementsService.getAllMeasurements());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("There are no measurements");
+        }
     }
 
     @GetMapping("/rainyDaysCount")
-    public List<Measurements> getRainyDaysCount() {
-        return measurementsService.getRainyDaysCount();
+    public Long getRainyDaysCount() {
+        try {
+            return measurementsService.getRainyDaysCountLong();
+        } catch (NullPointerException e) {
+            throw new NullPointerException("There are no rainy day measurements");
+        }
     }
 
 }
