@@ -8,13 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import ua.fesenko.ThirdProject.dto.ListWrapper;
 import ua.fesenko.ThirdProject.dto.MeasurementsDTO;
 import ua.fesenko.ThirdProject.models.Measurements;
 import ua.fesenko.ThirdProject.service.MeasurementsService;
 import ua.fesenko.ThirdProject.util.MeasurementNotCreatedException;
+import ua.fesenko.ThirdProject.util.SensorDuplicateException;
+import ua.fesenko.ThirdProject.util.SensorErrorResponse;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/measurements")
@@ -55,14 +58,14 @@ public class MeasurementsController {
         return modelMapper.map(measurementsDTO, Measurements.class);
     }
 
-    private List<MeasurementsDTO> convertToMeasurementsDTO(List<Measurements> measurements) {
-        return Collections.singletonList(modelMapper.map(measurements, MeasurementsDTO.class));
+    private MeasurementsDTO convertToMeasurementsDTO(Measurements measurements) {
+        return modelMapper.map(measurements, MeasurementsDTO.class);
     }
 
     @GetMapping
-    public List<MeasurementsDTO> getAllMeasurements() {
+    public ListWrapper getAllMeasurements() {
         try {
-            return convertToMeasurementsDTO(measurementsService.getAllMeasurements());
+            return new ListWrapper(measurementsService.getAllMeasurements().stream().map(this::convertToMeasurementsDTO).collect(Collectors.toList()));
         } catch (NullPointerException e) {
             throw new NullPointerException("There are no measurements");
         }
@@ -77,4 +80,11 @@ public class MeasurementsController {
         }
     }
 
+    @ExceptionHandler
+    private ResponseEntity<SensorErrorResponse> handleSensorRegistrationNotExist(SensorDuplicateException e) {
+        SensorErrorResponse sensorErrorResponse = new SensorErrorResponse(
+                "Sensor with this name not exist", System.currentTimeMillis()
+        );
+        return new ResponseEntity<>(sensorErrorResponse, HttpStatus.BAD_REQUEST);
+    }
 }
